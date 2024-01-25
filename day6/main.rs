@@ -22,7 +22,12 @@ impl Race {
     }
 
     fn to_beat_optimized(&self) -> u64 {
-        
+        let time: f64 = self.time as f64;
+        let record_distance: f64 = self.record_distance as f64; 
+        let lower_bound: f64 = (((time) - (time.powf(2.0)- (4.0*record_distance)).sqrt()) / (2.0)).ceil();
+        let upper_bound: f64 = (((time) + (time.powf(2.0)- (4.0*record_distance)).sqrt()) / (2.0)).floor();
+
+        (upper_bound - lower_bound + 1.0).round() as u64
     }
 }
 
@@ -39,7 +44,7 @@ fn read_input_file(filepath: &str) -> String{
     file_content
 }
 
-fn parse_file_content1(file_content: String) -> Vec<Race>{
+fn parse_file_content1(file_content: &str) -> Vec<Race>{
 
     let lines: Vec<&str> =  file_content.split("\n").collect();
 
@@ -73,7 +78,7 @@ fn parse_file_content1(file_content: String) -> Vec<Race>{
 
 }
 
-fn parse_file_content2(file_content: String) -> Vec<Race>{
+fn parse_file_content2(file_content: &str) -> Vec<Race>{
 
     let lines: Vec<&str> =  file_content.split("\n").collect();
 
@@ -133,6 +138,14 @@ fn part1(races: &Vec<Race>) -> u64{
     product
 }
 
+fn part2(races: &Vec<Race>) -> u64{
+    let mut product: u64 = 1;
+    for race in races {
+        product =  product * (race.to_beat_optimized());
+    }
+    product
+}
+
 
 fn main(){
 
@@ -146,15 +159,15 @@ fn main(){
 
     let file_content = read_input_file(file_path);
 
-    //let races = parse_file_content1(file_content);
+    let races = parse_file_content1(&file_content[..]);
 
-    let races2 = parse_file_content2(file_content);
+    let races2 = parse_file_content2(&file_content[..]);
 
-    //let part1_solution = part1(&races);
+    let part1_solution = part1(&races);
 
-    let part2_solution = part1(&races2);
+    let part2_solution = part2(&races2);
 
-    //println!("Part 1 solution: {part1_solution}");
+    println!("Part 1 solution: {part1_solution}");
 
     println!("Part 2 solution: {part2_solution}");
      
