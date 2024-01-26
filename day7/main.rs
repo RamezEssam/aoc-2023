@@ -141,8 +141,6 @@ fn main() {
 
     let mut hands: Vec<(Hand, u64)> = parse_file_content(&file_content[..]);
 
-    hands.sort_by(|a,b| a.0.partial_cmp(&b.0).expect("Could not sort hands."));
-
     let part1_solution = part1(&mut hands);
 
     println!("Part1 Solution = {part1_solution}");
