@@ -43,7 +43,7 @@ fn parse_file_content(file_content: &str) -> (HashMap<String, (String, String)>,
 
 }
 
-fn get_num_steps(from_node: &str, to_node: &str, node_map: &HashMap<String, (String, String)> , instructions: &str) -> i32{
+fn get_num_steps(from_node: &str, to_node: &str, node_map: &HashMap<String, (String, String)> , instructions: &str) -> u64{
 
     let mut cyclic_iterator = instructions.chars().cycle();
 
@@ -81,6 +81,62 @@ fn get_num_steps(from_node: &str, to_node: &str, node_map: &HashMap<String, (Str
     num_steps
 }
 
+fn gcd(a: u64, b: u64) -> u64 {
+    if a == 0 {return b;}
+    return gcd(b % a, a);
+}
+
+fn lcm(list: Vec<u64>) -> u64 {
+
+    return list.into_iter().reduce(|a, b| (a*b)/gcd(a,b)).unwrap();
+
+}
+
+
+fn get_num_steps2(node_map: &HashMap<String, (String, String)> , instructions: &str) -> u64 {
+
+    let mut starting_nodes = node_map.keys().cloned()
+                                        .filter(|s| s.ends_with('A'))
+                                        .collect::<Vec<String>>();
+
+    let mut steps_list: Vec<u64> = Vec::new();
+
+    for mut node in &starting_nodes {
+        
+        let mut cyclic_iterator = instructions.chars().cycle();
+
+        let mut src = node;
+
+        let mut num_steps = 0;
+
+        while !src.ends_with('Z') {
+
+            let instruction = cyclic_iterator.next().expect("Failed to get next character in cycle");
+
+            match instruction {
+                'R' => {
+                    src = &node_map.get(src).expect("Failed to get children").1;
+                    num_steps += 1;
+                    
+                },
+
+                'L' => {
+                    src = &node_map.get(src).expect("Failed to get children").0;
+                    num_steps += 1;
+                },
+                _ => {},
+            }
+        }
+
+        steps_list.push(num_steps);
+    }
+
+    return lcm(steps_list);
+
+    
+
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
@@ -99,6 +155,10 @@ fn main() {
 
     let part1_solution = get_num_steps("AAA", "ZZZ", &node_map, &instructions[..]);
 
+    let part2_solution = get_num_steps2(&node_map, &instructions);
+
     println!("Part 1 Solution = {}", part1_solution);
+
+    println!("Part 2 Solution = {}", part2_solution);
 
 }
