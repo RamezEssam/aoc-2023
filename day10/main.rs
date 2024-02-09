@@ -4,6 +4,253 @@ use std::env;
 use std::collections::HashMap;
 
 
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
+enum TileType {
+    Vertical,
+    Horizontal,
+    NorthEast,
+    NorthWest,
+    SouthWest,
+    SouthEast,
+    Ground,
+    Start,
+}
+
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Clone, Copy)]
+struct Tile {
+    tile_type: TileType,
+    position: (i32, i32),
+}
+
+impl Tile {
+    fn can_go(&self, destination: Tile) -> bool{
+        match self.tile_type {
+            TileType::Vertical => {
+                if destination.position.1 == self.position.1 +1{
+                    match destination.tile_type {
+                        TileType::Vertical => true,
+                        TileType::Horizontal => false,
+                        TileType::NorthEast => true,
+                        TileType::NorthWest => true,
+                        TileType::SouthWest => false,
+                        TileType::SouthEast => false,
+                        TileType::Ground => false,
+                        TileType::Start => true,
+                    }
+                }else if destination.position.1 == self.position.1 -1{
+                    match destination.tile_type {
+                        TileType::Vertical => true,
+                        TileType::Horizontal => false,
+                        TileType::NorthEast => false,
+                        TileType::NorthWest => false,
+                        TileType::SouthWest => true,
+                        TileType::SouthEast => true,
+                        TileType::Ground => false,
+                        TileType::Start => true,
+                    }
+                }else{
+                    false
+                }
+            },
+
+            TileType::Horizontal => {
+                if destination.position.0 == self.position.0 +1 {
+                    match destination.tile_type {
+                        TileType::Vertical => false,
+                        TileType::Horizontal => true,
+                        TileType::NorthEast => false,
+                        TileType::NorthWest => true,
+                        TileType::SouthWest => true,
+                        TileType::SouthEast => false,
+                        TileType::Ground => false,
+                        TileType::Start => true,
+                    }
+                }else if destination.position.0 == self.position.0 -1 {
+                    match destination.tile_type {
+                        TileType::Vertical => false,
+                        TileType::Horizontal => true,
+                        TileType::NorthEast => true,
+                        TileType::NorthWest => false,
+                        TileType::SouthWest => false,
+                        TileType::SouthEast => true,
+                        TileType::Ground => false,
+                        TileType::Start => true,
+                    }
+                }else{
+                    false
+                }
+            },
+
+            TileType::NorthEast => {
+                if destination.position.1 == self.position.1 -1 {
+                    match destination.tile_type {
+                        TileType::Vertical => true,
+                        TileType::Horizontal => false,
+                        TileType::NorthEast => false,
+                        TileType::NorthWest => false,
+                        TileType::SouthWest => true,
+                        TileType::SouthEast => true,
+                        TileType::Ground => false,
+                        TileType::Start => true,
+                    }
+                }else if destination.position.0 == self.position.0 +1 {
+                    match destination.tile_type {
+                        TileType::Vertical => false,
+                        TileType::Horizontal => true,
+                        TileType::NorthEast => false,
+                        TileType::NorthWest => true,
+                        TileType::SouthWest => true,
+                        TileType::SouthEast => false,
+                        TileType::Ground => false,
+                        TileType::Start => true,
+                    }
+                }else{
+                    false
+                }
+            },
+
+            TileType::NorthWest => {
+                if destination.position.1 == self.position.1 -1 {
+                    match destination.tile_type {
+                        TileType::Vertical => true,
+                        TileType::Horizontal => false,
+                        TileType::NorthEast => false,
+                        TileType::NorthWest => false,
+                        TileType::SouthWest => true,
+                        TileType::SouthEast => true,
+                        TileType::Ground => false,
+                        TileType::Start => true,
+                    }
+                }else if destination.position.0 == self.position.0 - 1 {
+                    match destination.tile_type {
+                        TileType::Vertical => false,
+                        TileType::Horizontal => true,
+                        TileType::NorthEast => true,
+                        TileType::NorthWest => false,
+                        TileType::SouthWest => false,
+                        TileType::SouthEast => true,
+                        TileType::Ground => false,
+                        TileType::Start => true,
+                    }
+                }else {
+                    false
+                }
+            },
+
+            TileType::SouthEast => {
+                if destination.position.1 == self.position.1 +1 {
+                    match destination.tile_type {
+                        TileType::Vertical => true,
+                        TileType::Horizontal => false,
+                        TileType::NorthEast => true,
+                        TileType::NorthWest => true,
+                        TileType::SouthWest => false,
+                        TileType::SouthEast => false,
+                        TileType::Ground => false,
+                        TileType::Start => true,
+                    }
+                }else if destination.position.0 == self.position.0 +1 {
+                    match destination.tile_type {
+                        TileType::Vertical => false,
+                        TileType::Horizontal => true,
+                        TileType::NorthEast => false,
+                        TileType::NorthWest => true,
+                        TileType::SouthWest => true,
+                        TileType::SouthEast => false,
+                        TileType::Ground => false,
+                        TileType::Start => true,
+                    }
+                }else {
+                    false
+                }
+            },
+
+            TileType::SouthWest => {
+                if destination.position.0 == self.position.0 -1 {
+                    match destination.tile_type {
+                        TileType::Vertical => false,
+                        TileType::Horizontal => true,
+                        TileType::NorthEast => true,
+                        TileType::NorthWest => false,
+                        TileType::SouthWest => false,
+                        TileType::SouthEast => true,
+                        TileType::Ground => false,
+                        TileType::Start => true,
+                    }
+                }else if destination.position.1 == self.position.1 +1 {
+                    match destination.tile_type {
+                        TileType::Vertical => true,
+                        TileType::Horizontal => false,
+                        TileType::NorthEast => true,
+                        TileType::NorthWest => true,
+                        TileType::SouthWest => false,
+                        TileType::SouthEast => false,
+                        TileType::Ground => false,
+                        TileType::Start => true,
+                    }
+                }else {
+                    false
+                }
+            },
+
+            TileType::Ground => {
+                false
+            },
+
+            TileType::Start => {
+                if destination.position.0 == self.position.0 +1 {
+                    match destination.tile_type {
+                        TileType::Vertical => false,
+                        TileType::Horizontal => true,
+                        TileType::NorthEast => false,
+                        TileType::NorthWest => true,
+                        TileType::SouthWest => true,
+                        TileType::SouthEast => false,
+                        TileType::Ground => false,
+                        TileType::Start => false,
+                    }
+                }else if destination.position.0 == self.position.0 -1 {
+                    match destination.tile_type {
+                        TileType::Vertical => false,
+                        TileType::Horizontal => true,
+                        TileType::NorthEast => true,
+                        TileType::NorthWest => false,
+                        TileType::SouthWest => false,
+                        TileType::SouthEast => true,
+                        TileType::Ground => false,
+                        TileType::Start => false,
+                    }
+                }else if destination.position.1 == self.position.1 -1 {
+                    match destination.tile_type {
+                        TileType::Vertical => true,
+                        TileType::Horizontal => false,
+                        TileType::NorthEast => false,
+                        TileType::NorthWest => false,
+                        TileType::SouthWest => true,
+                        TileType::SouthEast => true,
+                        TileType::Ground => false,
+                        TileType::Start => false,
+                    }
+                }else if destination.position.1 == self.position.1 +1 {
+                    match destination.tile_type {
+                        TileType::Vertical => true,
+                        TileType::Horizontal => false,
+                        TileType::NorthEast => true,
+                        TileType::NorthWest => true,
+                        TileType::SouthWest => false,
+                        TileType::SouthEast => false,
+                        TileType::Ground => false,
+                        TileType::Start => false,
+                    }
+                }else {
+                    false
+                }
+            },
+        }
+    }
+}
+
+
 
 fn read_input_file(filepath: &str) -> String{
     let mut input_file = match File::open(filepath) {
@@ -18,16 +265,90 @@ fn read_input_file(filepath: &str) -> String{
     file_content
 }
 
-fn parse_file_content(file_content: &str) -> Vec<Vec<char>> {
+fn parse_file_content(file_content: &str) -> Vec<Vec<Tile>> {
     let lines: Vec<&str> = file_content.split("\n").collect();
 
-    let mut grid: Vec<Vec<char>> = Vec::new();
+    let mut grid: Vec<Vec<Tile>> = Vec::new();
 
-    for line in lines {
-        let mut row:  Vec<char> = Vec::new();
-        for node in line.chars() {
+    for (r_idx,line) in lines.iter().enumerate() {
+        let mut row: Vec<Tile> = Vec::new();
+        for (c_idx,node) in line.chars().enumerate() {
             if node != '\r' {
-                row.push(node);
+                match node {
+                    '|' => {
+                        let tile = Tile {
+                            tile_type: TileType::Vertical,
+                            position: (c_idx as i32, r_idx as i32),
+                        };
+
+                        row.push(tile);
+                    },
+
+                    '-' => {
+                        let tile = Tile {
+                            tile_type: TileType::Horizontal,
+                            position: (c_idx as i32, r_idx as i32),
+                        };
+
+                        row.push(tile);
+                    },
+
+                    'L' => {
+                        let tile = Tile {
+                            tile_type: TileType::NorthEast,
+                            position: (c_idx as i32, r_idx as i32),
+                        };
+
+                        row.push(tile);
+                    },
+
+                    'J' => {
+                        let tile = Tile {
+                            tile_type: TileType::NorthWest,
+                            position: (c_idx as i32, r_idx as i32),
+                        };
+
+                        row.push(tile);
+                    },
+
+                    '7' => {
+                        let tile = Tile {
+                            tile_type: TileType::SouthWest,
+                            position: (c_idx as i32, r_idx as i32),
+                        };
+
+                        row.push(tile);
+                    },
+
+                    'F' => {
+                        let tile = Tile {
+                            tile_type: TileType::SouthEast,
+                            position: (c_idx as i32, r_idx as i32),
+                        };
+
+                        row.push(tile);
+                    },
+
+                    '.' => {
+                        let tile = Tile {
+                            tile_type: TileType::Ground,
+                            position: (c_idx as i32, r_idx as i32),
+                        };
+
+                        row.push(tile);
+                    },
+
+                    'S' => {
+                        let tile = Tile {
+                            tile_type: TileType::Start,
+                            position: (c_idx as i32, r_idx as i32),
+                        };
+
+                        row.push(tile);
+                    },
+
+                    _ => {}
+                }
             }
         }
 
@@ -37,73 +358,38 @@ fn parse_file_content(file_content: &str) -> Vec<Vec<char>> {
     grid
 }
 
-fn get_neigbors(x: i64, y: i64, grid: &Vec<Vec<char>>) -> Vec<(i64, i64)> {
+fn get_neigbors(tile: &Tile, grid: &Vec<Vec<Tile>>) -> Vec<Tile> {
+    let mut neigbors: Vec<Tile> = Vec::new();
 
-    let mut neigbors: Vec<(i64, i64)> = Vec::new();
-
-    let num_rows = grid.len() as i64;
-
-    let num_cols = grid[0].len() as i64;
-
-    match grid[y as usize][x as usize] {
-        '|' => {
-            if y+1 < num_cols {neigbors.push((x, y+1));}
-            
-            if y-1 >= 0 {neigbors.push((x, y-1));}
-        },
-
-        '-' => {
-            if x+1 < num_rows {neigbors.push((x+1, y));}
-            if x-1 >= 0 {neigbors.push((x-1, y));}
-        },
-
-        'L' => {
-            if y-1 >= 0 {neigbors.push((x, y-1));}
-            if x+1 < num_rows {neigbors.push((x+1, y));}
-        },
-
-        'J' => {
-            if y-1 >=0 {neigbors.push((x, y-1));}
-            if x-1 >=0 {neigbors.push((x-1, y));}
-        },
-
-        '7' => {
-            if y+1 < num_cols {neigbors.push((x, y+1));}
-            if x-1 >=0 {neigbors.push((x-1, y));}
-        },
-
-        'F' => {
-            if y+1 < num_cols {neigbors.push((x, y+1));}
-            if x+1 < num_rows {neigbors.push((x+1, y));}
-        },
-
-        'S' => {
-            if x+1 < num_rows {
-                if grid[y as usize][(x+1) as usize] != '.' {neigbors.push((x+1, y));}
-            }
-            if x-1 >=0 {
-
-                if grid[y as usize][(x-1) as usize] != '.' {neigbors.push((x-1, y));}
-            }
-            if y+1 < num_cols {
-                if grid[(y+1) as usize][x as usize] != '.' {neigbors.push((x, y+1));}
-            }
-            if y-1 >= 0 {
-                if grid[(y-1) as usize][x as usize] != '.' {neigbors.push((x, y-1));}
-            }
-        },
-
-        _ => {},
+    if tile.position.1 +1 < grid.len() as i32 {
+        if tile.can_go(grid[(tile.position.1 +1) as usize][tile.position.0 as usize]) {
+            neigbors.push(grid[(tile.position.1 +1) as usize][tile.position.0 as usize]);
+        }
     }
-
+    if tile.position.1 -1 >= 0 {
+        if tile.can_go(grid[(tile.position.1 -1) as usize][tile.position.0 as usize]) {
+            neigbors.push(grid[(tile.position.1 -1) as usize][tile.position.0 as usize]);
+        }
+    }
+    if tile.position.0 +1 < grid[0].len() as i32 {
+        if tile.can_go(grid[(tile.position.1) as usize][(tile.position.0 +1) as usize]) {
+            neigbors.push(grid[(tile.position.1) as usize][(tile.position.0 +1) as usize]);
+        }
+    }
+    if tile.position.0 -1 >= 0 {
+        if tile.can_go(grid[(tile.position.1) as usize][(tile.position.0 -1) as usize]) {
+            neigbors.push(grid[(tile.position.1) as usize][(tile.position.0 -1) as usize]);
+        }
+    }
+    
     neigbors
 } 
 
-fn find_starting_node(grid: &Vec<Vec<char>>, start: char) -> Option<(i64, i64)> {
-    for (r_idx,row) in grid.iter().enumerate() {
-        for (c_idx, node) in row.iter().enumerate(){
-            if *node == start {
-                return Some((r_idx as i64, c_idx as i64));
+fn find_starting_node(grid: &Vec<Vec<Tile>>) -> Option<Tile> {
+    for (_r_idx,row) in grid.iter().enumerate() {
+        for (_c_idx, node) in row.iter().enumerate(){
+            if node.tile_type == TileType::Start {
+                return Some(*node);
             }
         }
     }
@@ -111,11 +397,11 @@ fn find_starting_node(grid: &Vec<Vec<char>>, start: char) -> Option<(i64, i64)> 
     return None;
 }
 
-fn dfs(grid: &Vec<Vec<char>>, pos: (i64, i64)) -> i64{
+fn dfs(grid: &Vec<Vec<Tile>>, pos: Tile) -> (i32, HashMap<Tile, bool>){
 
-    let mut stack: Vec<(i64, i64)> = Vec::new();
+    let mut stack: Vec<Tile> = Vec::new();
 
-    let mut visited: HashMap<(i64, i64), bool> = HashMap::new();
+    let mut visited: HashMap<Tile, bool> = HashMap::new();
 
     stack.push(pos);
 
@@ -127,15 +413,54 @@ fn dfs(grid: &Vec<Vec<char>>, pos: (i64, i64)) -> i64{
         if visited.get(&current) == None {
             counter += 1;
             visited.insert(current.clone(), true);
-            for node in get_neigbors(current.0 as i64, current.1 as i64, grid).iter() {
+            for node in get_neigbors(&current, grid).iter() {
                 if visited.get(node) == None {
-                    stack.push(node.clone());
+                    stack.push(node.clone());    
                 }
             }
         }
     }
-    counter/2 as i64
+    (counter/2 as i32, visited)
     
+}
+
+fn get_enclosed(grid: &Vec<Vec<Tile>>, visited: &HashMap<Tile, bool>) -> i32 {
+    let mut counter = 0;
+    for (r_idx,row) in grid.iter().enumerate() {
+
+        
+        for (c_idx, node) in row.iter().enumerate(){
+
+            if visited.get(node) == None {
+
+                let mut intersections = 0;
+                for i in c_idx..row.len() {
+                    if visited.get(&grid[r_idx][i]) != None {
+                        let tile = grid[r_idx][i];
+                        if vec![TileType::Vertical, TileType::SouthEast, TileType::SouthWest].contains(&tile.tile_type) {
+                            intersections += 1
+                        }
+                        
+                    }
+                }
+
+                if intersections % 2 == 1 {
+                    print!("I");
+                    counter += 1;
+                    
+                }else{
+                    print!("O")
+                }
+            }else {
+                print!("*");
+            }
+        }
+        print!("\n");
+
+        
+    }
+
+    counter
 }
 
 
@@ -155,11 +480,15 @@ fn main() {
 
     let grid = parse_file_content(&file_content[..]);
 
-    let start = find_starting_node(&grid, 'S').expect("No start found");
+    let start = find_starting_node(&grid).expect("No start found");
 
-    let part1_solution  = dfs(&grid, start);
+    let (part1_solution, visited)  = dfs(&grid, start);
 
-    print!("Part 1 Solution = {:?}" ,part1_solution);
+    let part2_solution = get_enclosed(&grid, &visited);
+
+    println!("Part 1 Solution = {:?}" ,part1_solution);
+
+    println!("Part 2 Solution = {:?}" ,part2_solution);
 
 
 
