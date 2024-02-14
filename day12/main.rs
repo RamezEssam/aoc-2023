@@ -100,7 +100,7 @@ fn count_arrangements(arrangement: &str, sizes: Vec<usize>, mut cache: &mut Hash
     }
 
     if arrangement.chars().nth(0) == Some('#') || arrangement.chars().nth(0) == Some('?') {
-        if sizes[0] <= arrangement.len() && !arrangement.get(..sizes[0]).unwrap().contains(".") && (sizes[0] == arrangement.len() || arrangement.chars().nth(sizes[0]) != Some('#')) {
+        if sizes[0] <= arrangement.len() && !arrangement.get(..sizes[0]).unwrap().contains(".") && arrangement.chars().nth(sizes[0]) != Some('#') {
                 result += count_arrangements(&arrangement.get((sizes[0] + 1)..).unwrap_or(""), sizes.get(1..).expect("should have numbers").to_vec(), &mut cache);
 
         }
