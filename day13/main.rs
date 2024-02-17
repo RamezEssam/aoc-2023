@@ -54,9 +54,6 @@ fn part1(patterns: Vec<Vec<Vec<char>>>) -> usize {
         let mut h_reflection_line: (usize, usize) = (0,0);
         let mut v_reflection_line: (usize, usize) = (0,0);
 
-        let mut r_matches: Vec<(usize, usize)> = Vec::new();
-        let mut c_matches: Vec<(usize, usize)> = Vec::new();
-
         // Horizontal reflection line 
         'outer: for (r_idx, _row) in grid.iter().enumerate() {
             if r_idx + 1 < num_rows {
@@ -67,7 +64,6 @@ fn part1(patterns: Vec<Vec<Vec<char>>>) -> usize {
                         let r2 = &grid[r2_idx];
             
                         if zip(r1, r2).all(|(a,b)| *a==*b)  {
-                            r_matches.push((r1_idx, r2_idx));
                             if r1_idx == 0 || r2_idx == num_rows-1 {
                                 h_reflection_line = (r_idx, r_idx+1);
                                 break 'outer;
@@ -96,11 +92,9 @@ fn part1(patterns: Vec<Vec<Vec<char>>>) -> usize {
                         let c2 = grid.iter().map(|row| row[c2_idx]).collect::<Vec<char>>();
             
                         if zip(c1, c2).all(|(a,b)| a==b) {
-                            c_matches.push((c1_idx, c2_idx));
                             if c1_idx == 0 || c2_idx == num_cols-1 {
                                 v_reflection_line = (c_idx, c_idx+1);
                                 break 'outer;
-                                
                             }
             
                         }else {
